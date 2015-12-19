@@ -1,7 +1,6 @@
 package fish.philwants.glwaterloosquash;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
@@ -16,17 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ScrollView;
 
-import fish.philwants.glwaterloosquash.client.FetchStandings;
+import fish.philwants.glwaterloosquash.client.tasks.UpdateStandingsTask;
 import fish.philwants.glwaterloosquash.provider.SquashContract.StandingsEntry;
 
-public class DisplayStandingsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private String LOG_TAG = DisplayStandingsFragment.class.getSimpleName();
-    private static final int STANDINGS_LOADER = 0;
+public class GroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private String LOG_TAG = GroupFragment.class.getSimpleName();
+    private static final int STANDINGS_LOADER = 1;
 
     private OnFragmentInteractionListener mListener;
-    private SquashAdapter sAdapter;
+    private StandingsAdaptor cAdaptor;
 
     static final int COL_ID = 0;
     static final int COL_GROUP = 1;
@@ -46,11 +44,8 @@ public class DisplayStandingsFragment extends Fragment implements LoaderManager.
             StandingsEntry.COLUMN__POINTS };
 
 
-    public DisplayStandingsFragment() {
-    }
-
     public void updateStandings() {
-        FetchStandings task = new FetchStandings(getActivity());
+        UpdateStandingsTask task = new UpdateStandingsTask(getActivity());
         task.execute();
         getLoaderManager().restartLoader(STANDINGS_LOADER, null, this);
     }
@@ -65,11 +60,11 @@ public class DisplayStandingsFragment extends Fragment implements LoaderManager.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        sAdapter = new SquashAdapter(getActivity(), null, 0);
+        //cAdaptor = new StandingsAdaptor(getActivity(), null, 0);
 
-        View rootView = inflater.inflate(R.layout.fragment_display_standings, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_standings, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_standings);
-        listView.setAdapter(sAdapter);
+        listView.setAdapter(cAdaptor);
 
         return rootView;
     }
@@ -113,7 +108,7 @@ public class DisplayStandingsFragment extends Fragment implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchStandings task = new FetchStandings(getActivity());
+            UpdateStandingsTask task = new UpdateStandingsTask(getActivity());
             task.execute();
         }
 
@@ -139,22 +134,23 @@ public class DisplayStandingsFragment extends Fragment implements LoaderManager.
         Uri standingsUri = StandingsEntry.CONTENT_URI;
         String sortOrder = StandingsEntry.COLUMN__GROUP +  " ASC, " + "CAST(" + StandingsEntry.COLUMN__POINTS + " as integer) DESC";
 
+        PreferenceUtility prefs = new PreferenceUtility(getContext());
         return new CursorLoader(getActivity(),
                 standingsUri,
                 STANDINGS_COLUMNS,
-                null,
-                null,
+                StandingsEntry.COLUMN__GROUP + "= ?",
+                new String[] { prefs.group() },
                 sortOrder);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        sAdapter.swapCursor(data);
-        sAdapter.updateHeaderIndexs();
+        cAdaptor.swapCursor(data);
+        cAdaptor.updateHeaderIndexs();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        sAdapter.swapCursor(null);
+        cAdaptor.swapCursor(null);
     }
 }

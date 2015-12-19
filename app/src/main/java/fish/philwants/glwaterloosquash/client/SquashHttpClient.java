@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import fish.philwants.glwaterloosquash.data.PlayerProfileInfo;
+
 public class SquashHttpClient {
     static String LOG_TAG = SquashHttpClient.class.getSimpleName();
     private Map<String, String> cookies;
@@ -26,7 +28,6 @@ public class SquashHttpClient {
     public SquashHttpClient() {
         this.cookies = new HashMap<String, String>();
     }
-
 
     public static String sendGetRequest(URI uri) {
         HttpURLConnection urlConnection = null;
@@ -87,9 +88,13 @@ public class SquashHttpClient {
         return response;
     }
 
+    public boolean login(String username, String password) {
+        if(username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            return false;
+        }
 
-    public boolean login() {
         Map<String, String> loginParams = new HashMap<String, String>();
+        Boolean successfulLogin = false;
 
         try {
             // Send a request to obtain the asp viewstate data
@@ -117,8 +122,8 @@ public class SquashHttpClient {
             }
 
             // Update login credentials
-            loginParams.put("ctl00$MainContentArea$Login1$UserName","okeefephil@gmail.com");
-            loginParams.put("ctl00$MainContentArea$Login1$Password", "password Here");
+            loginParams.put("ctl00$MainContentArea$Login1$UserName", username);
+            loginParams.put("ctl00$MainContentArea$Login1$Password", password);
             loginParams.put("ctl00$MainContentArea$Login1$LoginButton", "Log In");
             loginParams.put("__EVENTTARGET", "");
             loginParams.put("__EVENTARGUMENT", "");
@@ -140,12 +145,15 @@ public class SquashHttpClient {
 
             // Confirm a the login was succesful
             Document d = response.parse();
-            Element e = d.getElementById("ctl00_LoginStatus1");
-            if (e == null) {
-                Log.e(LOG_TAG, "Phil: Failed login, No logout tag");
+            String responseText = d.toString();
+            if(responseText.contains("Your login attempt was not successful")) {
+                //Log.e(LOG_TAG, "Phil: Failed login, No logout tag");
                 return false;
+            } else if(responseText.contains("Logout")) {
+                Log.i(LOG_TAG, "Phil: Successful login");
             } else {
-                Log.i(LOG_TAG, "Phil: Successful login, element says " + e.text());
+                Log.i(LOG_TAG, "Phil: Unknown login status");
+                return false;
             }
 
             // Save cookies for subsequent requests
@@ -179,5 +187,20 @@ public class SquashHttpClient {
         }
 
         return standings;
+    }
+
+    public PlayerProfileInfo profile() {
+        PlayerProfileInfo profile = null;
+        try {
+            Connection connection = Jsoup.connect("http://glwaterloo.squashladder.ca/MyProfile").cookies(cookies);
+            Connection.Response response = connection.execute();
+
+            SquashResponseParser p = new SquashResponseParser();
+            profile = p.profile(response.parse());
+        } catch (IOException e) {
+            Log.e(LOG_TAG, e.getLocalizedMessage());
+            Log.e(LOG_TAG, "Phil: jsoup error3");
+        }
+        return profile;
     }
 }

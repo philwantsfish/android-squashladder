@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements DisplayStandingsFragment.OnFragmentInteractionListener {
-    private String LOG_TAG = MainActivity.class.getSimpleName();
+public class LoginActivity extends AppCompatActivity {
+    private String LOG_TAG = LoginActivity.class.getSimpleName();
     public String DISPLAY_TAG = "DisplayTag";
 
     @Override
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements DisplayStandingsF
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DisplayStandingsFragment(), DISPLAY_TAG)
+                    .add(R.id.container, new LoginFragment())
                     .commit();
         }
 
@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity implements DisplayStandingsF
     @Override
     protected void onResume() {
         super.onResume();
-        DisplayStandingsFragment ds = (DisplayStandingsFragment) getSupportFragmentManager().findFragmentByTag(DISPLAY_TAG);
+        /*StandingsFragment ds = (StandingsFragment) getSupportFragmentManager().findFragmentByTag(DISPLAY_TAG);
         if(ds != null) {
             Log.i(LOG_TAG, "Phil: Updating the database");
             ds.updateStandings();
-        }
+        }*/
     }
 
     @Override
@@ -66,10 +66,5 @@ public class MainActivity extends AppCompatActivity implements DisplayStandingsF
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

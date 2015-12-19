@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!-- Layout for weather forecast list item for future day (not today) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent"
+    tools:context="fish.philwants.glwaterloosquash.StandingsActivity$DisplayStandings">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -66,44 +62,15 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:maxHeight="10dp"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:paddingLeft="16dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/standings_player"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:text="Philip OKeefe"/>
+        <ListView
+            android:id="@+id/listview_standings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/standings_game_played"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:text="3"/>
-
-        <TextView
-            android:id="@+id/standings_wins"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:text="2"/>
-
-        <TextView
-            android:id="@+id/standings_losses"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:text="1"/>
-
-        <TextView
-            android:id="@+id/standings_points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-            android:paddingRight="8dp"
-            android:text="14"/>
     </LinearLayout>
-</LinearLayout>
+
+</FrameLayout>

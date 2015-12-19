@@ -1,17 +1,21 @@
-package fish.philwants.glwaterloosquash.client;
+package fish.philwants.glwaterloosquash.client.tasks;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import java.util.ArrayList;
 
+import fish.philwants.glwaterloosquash.client.SquashHttpClient;
 import fish.philwants.glwaterloosquash.provider.SquashContract;
 
-public class FetchStandings extends AsyncTask<Void, Void, ArrayList<ContentValues>> {
-    private final String LOG_TAG = FetchStandings.class.getSimpleName();
+/**
+ * This task will update the SquashProvider with the latest standings data
+ */
+public class UpdateStandingsTask extends AsyncTask<Void, Void, ArrayList<ContentValues>> {
+    private final String LOG_TAG = UpdateStandingsTask.class.getSimpleName();
 
     private Context mContext;
-    public FetchStandings(Context context) {
+    public UpdateStandingsTask(Context context) {
         mContext = context;
     }
 
@@ -34,13 +38,13 @@ public class FetchStandings extends AsyncTask<Void, Void, ArrayList<ContentValue
     protected void onPostExecute(ArrayList<ContentValues> standings) {
         if (standings != null) {
 
-            /*DisplayStandingsFragment.standingsAdapter.clear();
+            /*StandingsFragment.standingsAdapter.clear();
             for (String key : standings.keySet()) {
                 Log.i(LOG_TAG, "Adding group " + key);
-                DisplayStandingsFragment.standingsAdapter.add("Group " + key);
+                StandingsFragment.standingsAdapter.add("Group " + key);
                 for (GroupRow player : standings.get(key)) {
                     Log.i(LOG_TAG, "Phil: adding player " + player.toString());
-                    DisplayStandingsFragment.standingsAdapter.add(player.toString());
+                    StandingsFragment.standingsAdapter.add(player.toString());
                 }
             }*/
         }

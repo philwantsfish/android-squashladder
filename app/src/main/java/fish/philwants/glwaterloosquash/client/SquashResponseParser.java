@@ -6,6 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import fish.philwants.glwaterloosquash.data.PlayerProfileInfo;
 import fish.philwants.glwaterloosquash.provider.SquashContract;
 
 public class SquashResponseParser {
@@ -73,6 +77,68 @@ public class SquashResponseParser {
         }*/
         return standings;
     }
+
+    public PlayerProfileInfo profile(Document document) {
+        String playerId = "";
+        String firstname = "";
+        String lastname = "";
+        String email = "";
+        String phone = "";
+        String group = "";
+
+        Element firstnameElement = document.select("input[name=ctl00$MainContentArea$uxFirstName").first();
+        if(firstnameElement != null) {
+            firstname = firstnameElement.attr("value");
+            //Log.i(LOG_TAG, "Phil: first name is " + firstname);
+        }else {
+            Log.e(LOG_TAG, "Phil: didnt find first name node");
+        }
+
+        Element lastnameElement = document.select("input[name=ctl00$MainContentArea$uxLastName").first();
+        if(lastnameElement != null) {
+            lastname = lastnameElement.attr("value");
+            //Log.i(LOG_TAG, "Phil: last name is " + lastname);
+        }else {
+            Log.e(LOG_TAG, "Phil: didnt find last name node");
+        }
+
+        Element emailElement = document.select("input[name=ctl00$MainContentArea$uxEmail").first();
+        if(emailElement != null) {
+            email = emailElement.attr("value");
+           // Log.i(LOG_TAG, "Phil: email is " + email);
+        }else {
+            Log.e(LOG_TAG, "Phil: didnt find email name node");
+        }
+
+        Element phoneNumberElement = document.select("input[name=ctl00$MainContentArea$uxPhoneM").first();
+        if(phoneNumberElement != null) {
+            phone = phoneNumberElement.attr("value");
+            //Log.i(LOG_TAG, "Phil: phone number is " + phone);
+        }else {
+            Log.e(LOG_TAG, "Phil: didnt find phone node");
+        }
+
+        String documentString = document.toString();
+        Pattern groupPattern = Pattern.compile("Level: (\\S)");
+        Matcher groupMatcher = groupPattern.matcher(documentString);
+        if(groupMatcher.find()) {
+            //Log.i(LOG_TAG, "Phil: group : " + groupMatcher.group(1));
+            group = groupMatcher.group(1);
+        }
+
+        Pattern playerIdPattern = Pattern.compile("/(\\d+).>" + firstname + " " + lastname + "</a>");
+        Matcher playerIdMatcher = playerIdPattern.matcher(documentString);
+        if(playerIdMatcher.find()) {
+            //Log.i(LOG_TAG, "Phil: playerId : " + playerIdMatcher.group(1));
+            playerId = playerIdMatcher.group(1);
+        }
+
+        PlayerProfileInfo p  = new PlayerProfileInfo(playerId, firstname, lastname, phone, email, group);
+        Log.i(LOG_TAG, "Phil: Player info: " + p.toString());
+
+        return p;
+    }
+
 
     protected String parseHeaderRow(Element row) {
         //Log.i(LOG_TAG, "Phil: inside parseHeaderRow");

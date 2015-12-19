@@ -4,29 +4,24 @@ package fish.philwants.glwaterloosquash;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import fish.philwants.glwaterloosquash.provider.SquashContract.StandingsEntry;
 
-
-import fish.philwants.glwaterloosquash.provider.SquashContract;
-
-public class SquashAdapter extends CursorAdapter {
+public class StandingsAdaptor extends CursorAdapter {
     private ArrayList<Integer> headerIndexs = new ArrayList<Integer>();
     private Context mContext;
-    private static final String LOG_TAG = SquashAdapter.class.getSimpleName();
+    private static final String LOG_TAG = StandingsAdaptor.class.getSimpleName();
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_ROW = 1;
 
-    public SquashAdapter(Context context, Cursor c, int flags) {
+    public StandingsAdaptor(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
         updateHeaderIndexs();
@@ -36,15 +31,15 @@ public class SquashAdapter extends CursorAdapter {
         headerIndexs.clear();
         headerIndexs.add(0);
         Cursor c = mContext.getContentResolver().query(StandingsEntry.CONTENT_URI,
-                DisplayStandingsFragment.STANDINGS_COLUMNS,
+                StandingsFragment.STANDINGS_COLUMNS,
                 null,
                 null,
                 StandingsEntry.COLUMN__GROUP + " ASC");
 
         if(c.moveToFirst()) {
-            String currentGroup = c.getString(DisplayStandingsFragment.COL_GROUP);
+            String currentGroup = c.getString(StandingsFragment.COL_GROUP);
             while (c.moveToNext()) {
-                String newGroup = c.getString(DisplayStandingsFragment.COL_GROUP);
+                String newGroup = c.getString(StandingsFragment.COL_GROUP);
                 if (!currentGroup.equals(newGroup)) {
                     currentGroup = newGroup;
                     headerIndexs.add(c.getPosition());
@@ -87,12 +82,12 @@ public class SquashAdapter extends CursorAdapter {
         TextView pointsView = (TextView) view.findViewById(R.id.standings_points);
 
         if(groupView != null) {
-            groupView.setText("Group " + cursor.getString(DisplayStandingsFragment.COL_GROUP));
+            groupView.setText("Group " + cursor.getString(StandingsFragment.COL_GROUP));
         }
-        playerView.setText(cursor.getString(DisplayStandingsFragment.COL_PLAYER));
-        games_playedView.setText(cursor.getString(DisplayStandingsFragment.COL_GAMES_PLAYED));
-        winsView.setText(cursor.getString(DisplayStandingsFragment.COL_WINS));
-        lossesView.setText(cursor.getString(DisplayStandingsFragment.COL_LOSSES));
-        pointsView.setText(String.format("%3s" ,cursor.getString(DisplayStandingsFragment.COL_POINTS)));
+        playerView.setText(cursor.getString(StandingsFragment.COL_PLAYER));
+        games_playedView.setText(cursor.getString(StandingsFragment.COL_GAMES_PLAYED));
+        winsView.setText(cursor.getString(StandingsFragment.COL_WINS));
+        lossesView.setText(cursor.getString(StandingsFragment.COL_LOSSES));
+        pointsView.setText(String.format("%3s" ,cursor.getString(StandingsFragment.COL_POINTS)));
     }
 }
