@@ -1,1 +1,1 @@
-readme file
+An Android application for squashladder.ca
